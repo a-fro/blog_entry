@@ -87,6 +87,15 @@ function blog_entry_menu() {
     'access arguments' => array('administer blog entries'),
   );
 
+  $items['blog/entries'] = array(
+    'title' => 'Entries',
+    'page callback' => 'blog_entry_entries_page',
+    'access callback' => 'blog_entry_access',
+    'access arguments' => array('view', 2),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3
+  );
+
   $items['blog/entry/%'] = array(
     'title callback' => 'blog_entry_title',
     'title arguments' => array(2),
@@ -246,6 +255,40 @@ function blog_entry_load_multiple($entry_ids = array(), $conditions = array(), $
   }
 
   return entity_load('blog_entry', $entry_ids, $conditions, $reset);
+}
+
+/**
+ * View callback for the blog entries page
+ * @see blog_entry_menu()
+ */
+function blog_entry_entries_page() {
+  drupal_set_title(t('Blog Entries'));
+  $entry_ids = blog_entry_get_entries();
+  $entries = blog_entry_load_multiple($entry_ids);
+  if (!empty($entries)) {
+    $content = entity_view('blog_entry', $entries, 'teaser');
+  } // No entries yet created, add a link to create one or a message
+  else {
+    $content = (user_access('manage blog entries'))
+      ? l(t('Create your first entry'), 'blog/entry/add')
+      : t('Sorry, but there are currently no blog entries to see. Check back soon!');
+  }
+  return $content;
+}
+
+/**
+ * Use EntityFieldQuery to get all blog entry ids
+ */
+function blog_entry_get_entries() {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'blog_entry')
+    ->propertyOrderBy('created', 'DESC');
+  $result = $query->execute();
+
+  if (isset($result['blog_entry'])) {
+    return array_keys($result['blog_entry']);
+  }
+  return array();
 }
 
 /**
