@@ -1,0 +1,7 @@
+name = Blog Entries
+description = A small, custom blog entry interface
+package = Custom
+core = 7.x
+
+dependencies[] = entity
+dependencies[] = text
