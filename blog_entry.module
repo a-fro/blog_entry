@@ -5,3 +5,72 @@
  * Blog Entries module file
  */
 
+/**
+ * Implements hook_entity_info().
+ */
+function blog_entry_entity_info() {
+  return array(
+    'blog_entry' => array(
+      'label' => t('Blog Entry'),
+      'plural label' => t('Blog Entries'),
+      'controller class' => 'EntityAPIController',
+      'metadata controller class' => 'BlogEntryMetadataController',
+      'entity class' => 'BlogEntry',
+      'views controller class' => 'EntityDefaultViewsController',
+      'base table' => 'blog_entry',
+      'fieldable' => TRUE,
+      'entity keys' => array(
+        'id' => 'entry_id',
+        'label' => 'title',
+      ),
+      'bundles' => array(
+        'blog_entry' => array(
+          'label' => 'Blog Entries',
+          'admin' => array(
+            'path' => 'admin/structure/blog-entries',
+            'access arguments' => array('administer blog entries'),
+          ),
+        ),
+      ),
+      'view modes' => array(
+        'full' => array(
+          'label' => t('Default'),
+          'custom settings' => FALSE,
+        ),
+        'teaser' => array(
+          'label' => t('Teaser'),
+          'custom settings' => TRUE,
+        )
+      ),
+      'access callback' => 'blog_entry_access',
+      'admin ui' => array(
+        'path' => 'admin/blog-entries',
+        'controller class' => 'EntityDefaultUIController',
+      ),
+      'uri callback' => 'entity_class_uri',
+      'module' => 'blog_entry',
+      'label callback' => 'entity_class_label'
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function blog_entry_permission() {
+  return array(
+    'administer blog entries' => array(
+      'title' => t('Administer Blog Entries'),
+      'description' => t('Perform administration tasks and manage the structure of blog entries.'),
+    ),
+    'manage blog entries' => array(
+      'title' => t('Manage blog entries'),
+      'description' => t('Create, update or delete blog entries.'),
+    ),
+    'access blog entries' => array(
+      'title' => t('Access blog bntries'),
+      'description' => t('View for blog entries.'),
+    ),
+  );
+}
+
