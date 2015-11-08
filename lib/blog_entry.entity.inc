@@ -19,4 +19,11 @@ class BlogEntry extends Entity {
   public function buildContent($view_mode = 'full', $langcode = NULL) {
     return parent::buildContent($view_mode, $langcode);
   }
+
+  /**
+   * Change the default URI from default/id to blog/entry/id
+   */
+  protected function defaultUri() {
+    return array('path' => 'blog/entry/' . $this->identifier());
+  }
 }
