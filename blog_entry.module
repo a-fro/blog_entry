@@ -267,13 +267,20 @@ function blog_entry_entries_page() {
   $entries = blog_entry_load_multiple($entry_ids);
   if (!empty($entries)) {
     $content = entity_view('blog_entry', $entries, 'teaser');
+    $output = array(
+      'content'=> $content,
+      'pager'=> array(
+        '#markup' => theme('pager'),
+        '#weight' => 10,
+      )
+    );
   } // No entries yet created, add a link to create one or a message
   else {
-    $content = (user_access('manage blog entries'))
+    $output[]['#markup'] = (user_access('manage blog entries'))
       ? l(t('Create your first entry'), 'blog/entry/add')
-      : t('Sorry, but there are currently no blog entries to see. Check back soon!');
+      : t('Sorry, but there are currently no blog entries to see. Check back soon.');
   }
-  return $content;
+  return $output;
 }
 
 /**
@@ -282,7 +289,8 @@ function blog_entry_entries_page() {
 function blog_entry_get_entries() {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'blog_entry')
-    ->propertyOrderBy('created', 'DESC');
+    ->propertyOrderBy('created', 'DESC')
+    ->pager(10);
   $result = $query->execute();
 
   if (isset($result['blog_entry'])) {
