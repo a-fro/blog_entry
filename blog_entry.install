@@ -59,3 +59,60 @@ function blog_entry_schema() {
   return $schema;
 }
 
+
+/**
+ * Implements hook_install()
+ */
+function blog_entry_install() {
+  $t = get_t();
+  $blog_entry_body = array(
+    'field_name' => 'blog_entry_body',
+    'type' => 'text_with_summary',
+    'module' => 'text',
+    'cardinality' => 1,
+    'locked' => TRUE,
+  );
+  field_create_field($blog_entry_body);
+
+  $trim_length = variable_get('blog_teaser_length', 600);
+
+  $blog_entry_body_instance = array(
+    'field_name' => 'blog_entry_body',
+    'entity_type' => 'blog_entry',
+    'bundle' => 'blog_entry',
+    'label' => $t('Body'),
+    'widget' => array(
+      'type' => 'text_textarea_with_summary',
+      'settings' => array(
+        'rows' => 20,
+        'summary_rows' => 5,
+      ),
+      'module' => 'text',
+    ),
+    'settings' => array(
+      'text_processing' => 1,
+      'display_summary' => TRUE,
+    ),
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'type' => 'text_default',
+      ),
+      'teaser' => array(
+        'label' => 'hidden',
+        'type' => 'text_summary_or_trimmed',
+        'trim_length' => $trim_length,
+      ),
+    ),
+  );
+  field_create_instance($blog_entry_body_instance);
+}
+
+/**
+ * Implements hook_uninstall().
+ * Deletes the field and its instances
+ */
+function blog_entry_uninstall() {
+  field_delete_field('blog_entry_body');
+  variable_del('blog_teaser_length');
+}
