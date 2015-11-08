@@ -74,3 +74,86 @@ function blog_entry_permission() {
   );
 }
 
+/**
+ * Implements hook_menu().
+ */
+function blog_entry_menu() {
+  $items = array();
+
+  $items['admin/structure/blog-entries'] = array(
+    'title' => 'Blog Entries',
+    'description' => 'Manage Blog entries',
+    'page callback' => 'blog_entry_admin_page',
+    'access arguments' => array('administer blog entries'),
+  );
+
+  return $items;
+}
+
+/*
+ * Admin page for Blog Entries
+ */
+function blog_entry_admin_page() {
+  return t('Administer blog entry fields and display');
+}
+
+/**
+ * Checks blog entry access.
+ *
+ * @param $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param $entry
+ * @param $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ */
+function blog_entry_access($op, $entry = NULL, $account = NULL) {
+  if (user_access('administer blog entries', $account)) {
+    return TRUE;
+  }
+
+  if ($op == 'view' && user_access('access blog entries', $account)) {
+    return TRUE;
+  }
+
+  if (($op == 'edit' || $op == 'create' || $op == 'delete')
+    && user_access('manage blog entries', $account)
+  ) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Form definition for adding/editing blog entries
+ */
+function blog_entry_form($form, &$form_state, $entry = NULL) {
+  $form['title'] = array(
+    '#title' => t('Title'),
+    '#type' => 'textfield',
+    '#default_value' => isset($entry->title) ? $entry->title : '',
+    '#required' => TRUE,
+    '#weight' => -10,
+  );
+
+  field_attach_form('blog_entry', $entry, $form, $form_state);
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => isset($entry->id) ? t('Update entry') : t('Save entry'),
+    '#weight' => 999,
+  );
+  return $form;
+}
+
+/**
+ * Submit handler for the blog entry add/edit form.
+ */
+function blog_entry_form_submit($form, &$form_state) {
+  $entry = entity_ui_form_submit_build_entity($form, $form_state);
+  $entry->save();
+  drupal_set_message(t('The entry <em>@title</em> has been saved.', array('@title' => $entry->title)));
+  $form_state['redirect'] = 'admin/blog-entries';
+}
+
