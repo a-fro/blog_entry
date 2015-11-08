@@ -13,11 +13,57 @@ class BlogEntry extends Entity {
     $created = '',
     $updated = '';
 
+  public function __construct(array $values = array()) {
+    parent::__construct($values, 'blog_entry');
+    if (!$this->entry_id) {
+      global $user;
+      $this->created = REQUEST_TIME;
+      $this->author_uid = $user->uid;
+    }
+  }
+
   /**
-   * @todo add properties
+   * Override buildContent() to add properties.
    */
   public function buildContent($view_mode = 'full', $langcode = NULL) {
-    return parent::buildContent($view_mode, $langcode);
+    $wrapper = entity_metadata_wrapper('blog_entry', $this);
+    $author = $wrapper->author->value();
+
+    $content['author'] = array(
+      '#theme' => 'blog_entry_property_field',
+      '#label' => t('Author'),
+      '#items' => array(
+        array(
+          '#markup' => $author->name,
+        ),
+      ),
+      '#classes' => 'field field-label-inline clearfix',
+    );
+
+    $content['created'] = array(
+      '#theme' => 'blog_entry_property_field',
+      '#label' => t('Created'),
+      '#items' => array(
+        array(
+          '#markup' => format_date($this->created),
+        ),
+      ),
+      '#classes' => 'field field-label-inline clearfix',
+    );
+
+    return entity_get_controller($this->entityType)
+      ->buildContent($this, $view_mode, $langcode, $content);
+  }
+
+  /**
+   * Permanently saves the entity.
+   *
+   * @return bool
+   *  Returns FALSE if entity was not saved.
+   */
+  public function save() {
+    $this->updated = REQUEST_TIME;
+    return parent::save();
   }
 
   /**

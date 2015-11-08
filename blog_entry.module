@@ -100,6 +100,33 @@ function blog_entry_menu() {
   return $items;
 }
 
+/**
+ * Implements hook_theme().
+ */
+function blog_entry_theme() {
+  return array(
+    'blog_entry_property_field' => array(
+      'variables' => array(
+        'label_hidden' => FALSE,
+        'title_attributes' => NULL,
+        'label' => '',
+        'content_attributes' => NULL,
+        'items' => array(),
+        'item_attributes' => array(0 => ''),
+        'classes' => '',
+        'attributes' => '',
+      ),
+    ),
+  );
+}
+
+/**
+ * Theme function for properties.
+ */
+function theme_blog_entry_property_field($variables) {
+  return theme_field($variables);
+}
+
 /*
  * Admin page for Blog Entries
  */
@@ -133,6 +160,40 @@ function blog_entry_access($op, $entry = NULL, $account = NULL) {
   }
 
   return FALSE;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function blog_entry_field_extra_fields() {
+  $extra = array();
+  $extra['blog_entry']['blog_entry'] = array(
+    'form' => array(
+      'author' => array(
+        'label' => t('Author'),
+        'description' => t('Author of the entry'),
+        'weight' => -4,
+      ),
+      'created' => array(
+        'label' => t('Created date'),
+        'description' => t('Date/time the entry was created.'),
+        'weight' => -3,
+      ),
+    ),
+    'display' => array(
+      'author' => array(
+        'label' => t('Author'),
+        'description' => t('Author of the entry.'),
+        'weight' => -4,
+      ),
+      'created' => array(
+        'label' => t('Created date'),
+        'description' => t('Date/time the entry was created.'),
+        'weight' => -3,
+      ),
+    ),
+  );
+  return $extra;
 }
 
 /**
