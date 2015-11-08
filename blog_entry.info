@@ -7,4 +7,5 @@ dependencies[] = entity
 dependencies[] = text
 
 ; Classes
+files[] = lib/blog_entry.entity.inc
 files[] = lib/blog_entry.metadata.inc
