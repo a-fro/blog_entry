@@ -1,2 +1,61 @@
 <?php
 
+/**
+ * Implements hook_schema().
+ */
+function blog_entry_schema() {
+  $schema['blog_entry'] = array(
+    'description' => 'The base table for the blog entry module.',
+    'fields' => array(
+      'entry_id' => array(
+        'description' => 'The primary identifier for a blog entry.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'The title of the blog entry.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'author_uid' => array(
+        'description' => 'The uid of the user who created this blog entry.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the entry was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'updated' => array(
+        'description' => 'The Unix timestamp when the entry was last saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+      'blog_entry_updated' => array('updated'),
+      'blog_entry_created' => array('created'),
+      'blog_entry_author' => array('author_uid'),
+    ),
+    'unique keys' => array(
+      'entry_id' => array('entry_id'),
+    ),
+    'foreign keys' => array(
+      'blog_entry_author' => array(
+        'table' => 'users',
+        'columns' => array('author_uid' => 'uid'),
+      ),
+    ),
+    'primary key' => array('entry_id'),
+  );
+
+  return $schema;
+}
+
