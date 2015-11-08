@@ -11,7 +11,8 @@ class BlogEntry extends Entity {
     $title = '',
     $author_uid = NULL,
     $created = '',
-    $updated = '';
+    $updated = '',
+    $status;
 
   public function __construct(array $values = array()) {
     parent::__construct($values, 'blog_entry');
@@ -63,6 +64,10 @@ class BlogEntry extends Entity {
    */
   public function save() {
     $this->updated = REQUEST_TIME;
+    $this->created = strtotime($this->date);
+    if ($user = user_load_by_name($this->name)) {
+      $this->author_uid = $user->uid;
+    }
     return parent::save();
   }
 

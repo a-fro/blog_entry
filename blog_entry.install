@@ -38,6 +38,13 @@ function blog_entry_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'status' => array(
+        'description' => 'The publishing status of an entry.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+        'size' => 'tiny',
+      ),
     ),
     'indexes' => array(
       'blog_entry_updated' => array('updated'),
@@ -115,4 +122,19 @@ function blog_entry_install() {
 function blog_entry_uninstall() {
   field_delete_field('blog_entry_body');
   variable_del('blog_teaser_length');
+}
+
+/**
+ * Adds status column to node table
+ */
+function blog_entry_update_7001() {
+  if (!db_field_exists('blog_entry', 'status')) {
+    $spec = array(
+      'description' => 'Status',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0
+    );
+    db_add_field('blog_entry', 'status', $spec);
+  }
 }

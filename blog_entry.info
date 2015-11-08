@@ -5,6 +5,7 @@ core = 7.x
 
 dependencies[] = entity
 dependencies[] = text
+dependencies[] = node
 
 ; Classes
 files[] = lib/blog_entry.entity.inc
