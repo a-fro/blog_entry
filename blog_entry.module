@@ -45,7 +45,7 @@ function blog_entry_entity_info() {
       'access callback' => 'blog_entry_access',
       'admin ui' => array(
         'path' => 'admin/blog-entries',
-        'controller class' => 'EntityDefaultUIController',
+        'controller class' => 'BlogEntryUIController',
       ),
       'uri callback' => 'entity_class_uri',
       'module' => 'blog_entry',
