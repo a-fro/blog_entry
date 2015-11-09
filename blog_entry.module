@@ -88,11 +88,10 @@ function blog_entry_menu() {
   );
 
   $items['blog/entries'] = array(
-    'title' => 'Entries',
+    'title' => 'Blog Entries',
     'page callback' => 'blog_entry_entries_page',
     'access callback' => 'blog_entry_access',
     'access arguments' => array('view', 2),
-    'type' => MENU_LOCAL_TASK,
     'weight' => 3
   );
 
